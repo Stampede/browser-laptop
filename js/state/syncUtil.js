@@ -135,7 +135,16 @@ module.exports.applySyncRecord = (record) => {
         ? siteTags.BOOKMARK_FOLDER
         : siteTags.BOOKMARK
       let bookmarkProps = Object.assign({}, record.bookmark, record.bookmark.site, {objectId})
+      if (bookmarkProps.parentFolderObjectId && bookmarkProps.parentFolderObjectId.length > 0) {
+        const folderObjectId = new Immutable.List(bookmarkProps.parentFolderObjectId)
+        bookmarkProps.parentFolderId = getFolderIdByObjectId(folderObjectId)
+      }
+      delete bookmarkProps.parentFolderObjectId
+      // TODO: Just pick the legit props
       delete bookmarkProps.bookmark
+      // Used for relative ordering on which to apply first
+      delete bookmarkProps.index
+
       const bookmarkSite = new Immutable.Map(bookmarkProps)
       applySiteRecord(record, bookmarkSite, tag)
       break
@@ -239,6 +248,17 @@ module.exports.getObjectById = (objectId, category) => {
 }
 
 /**
+ * Given an bookmark folder objectId, find the folder and return its folderId.
+ * @param {Immutable.List} objectId
+ * @returns {number|undefined}
+ */
+const getFolderIdByObjectId = (objectId) => {
+  const entry = this.getObjectById(objectId, 'BOOKMARKS')
+  if (!entry) { return undefined }
+  return entry[1].get('folderId')
+}
+
+/**
  * Gets current time in seconds
  */
 module.exports.now = () => {
@@ -280,6 +300,29 @@ module.exports.newObjectId = (objectPath) => {
 }
 
 /**
+ * Given a bookmark folder's folderId, get or set its object ID.
+ * @param {number} folderId
+ * @returns {Array.<number>}
+ */
+module.exports.findOrCreateFolderObjectId = (folderId) => {
+  if (!folderId) { return undefined }
+  const AppStore = require('../stores/appStore')
+  const appState = AppStore.getState()
+  const folderEntry = appState.get('sites').findEntry((site, _index) => {
+    return site.get('folderId') === folderId
+  })
+  if (!folderEntry) { return undefined }
+  const folderIndex = folderEntry[0]
+  const folder = folderEntry[1]
+  const objectId = folder.get('objectId')
+  if (objectId) {
+    return objectId.toJS()
+  } else {
+    return module.exports.newObjectId(['sites', folderIndex])
+  }
+}
+
+/**
  * Converts a site object into input for sendSyncRecords
  * @param {Object} site
  * @param {number=} siteIndex
@@ -302,14 +345,16 @@ module.exports.createSiteData = (site, siteIndex) => {
     if (!site.objectId && typeof siteIndex !== 'number') {
       throw new Error('Missing bookmark objectId.')
     }
+    const objectId = site.objectId || module.exports.newObjectId(['sites', siteIndex])
+    const parentFolderObjectId = site.parentFolderObjectId || (site.parentFolderId && module.exports.findOrCreateFolderObjectId(site.parentFolderId))
     return {
       name: 'bookmark',
-      objectId: site.objectId || module.exports.newObjectId(['sites', siteIndex]),
+      objectId,
       value: {
         site: siteData,
         isFolder: site.tags.includes('bookmark-folder'),
-        folderId: site.folderId || 0,
-        parentFolderId: site.parentFolderId || 0
+        parentFolderObjectId,
+        index: siteIndex || 0
       }
     }
   } else if (!site.tags || !site.tags.length || site.tags.includes('pinned')) {
