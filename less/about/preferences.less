@@ -83,19 +83,61 @@ body {
   z-index: 600;
   width: @sideBarWidth;
   height: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  font-size: 16px; // change this too rem when we have a global font-size
 
-  > div {
-    display: block;
+  .prefNav {
+    display: flex;
+    flex-flow: column nowrap;
+    flex: 1 0 auto;
     width: 100%;
+    margin-top: 20px;
+  }
 
-    &:first-of-type {
-      box-sizing: border-box;
-      margin: 20px auto;
-      padding-left: 20px;
-      color: @white50;
-      font-size: 0.9em;
-      font-weight: 300;
+  .tabMarker {
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid #999999;
+    height: 0;
+    left: ~"calc(100% - 6px)";
+    transform: rotateZ(-90deg);
+    position: absolute;
+    width: 0;
+    top: ~"calc(50% - 4px)";
+  }
+
+  .icon-image-gen(@name; @sel;) when(@sel = true) {
+    .i-@{name}{
+      background: url("../../img/prefs/browser_prefs_@{name}_sel.svg") 0 0 / contain no-repeat;
     }
+  }
+
+  .icon-image-gen(@name; @sel;) when(@sel = false) {
+    .i-@{name}{
+      background: url("../../img/prefs/browser_prefs_@{name}.svg") 0 0 / contain no-repeat;
+    }
+  }
+
+  .icon {
+    display: block;
+    width: 1.5em;
+    height: 1.5em;
+    fill: currentColor;
+    margin-right: 5px;
+  }
+
+  .icon-image-gen(general; false;);
+  .icon-image-gen(search; false;);
+  .icon-image-gen(tabs; false;);
+  .icon-image-gen(security; false;);
+  .icon-image-gen(shields; false;);
+  .icon-image-gen(payments; false;);
+  .icon-image-gen(sync; false;);
+  .icon-image-gen(advanced; false;);
+
+  .prefNavItem{
+    position: relative;
 
     &:hover {
       .topBarButton.fa {
@@ -104,56 +146,6 @@ body {
       }
     }
 
-    .topBarButton.fa {
-      display: flex;
-      align-items: center;
-      width: 100%;
-      background: transparent;
-      padding: 10px 0 0 20px;
-      -webkit-user-select: none;
-
-      &:before,
-      &::before {
-        content: none;
-      }
-
-      > i {
-        display: block;
-        width: 28px;
-        height: 28px;
-
-        &.i-list-alt {
-          background: url('../../img/list.svg') 0 0 / contain no-repeat;
-          margin: 3px -2px 0px 2px;
-        }
-        &.i-search {
-          background: url('../../img/search.svg') 0 0 / contain no-repeat;
-          margin: 1px -1px 0px 1px;
-        }
-        &.i-bookmark-o {
-          background: url('../../img/bookmark.svg') 0 0 / contain no-repeat;
-          margin: 0px 1px -8px -1px;
-        }
-        &.i-lock {
-          background: url('../../img/lock.svg') 0 0 / contain no-repeat;
-          margin: 0px -4px 0px 4px;
-        }
-        &.i-user {
-          background: url('../../img/shields.svg') 0 0 / contain no-repeat;
-          margin: -3px -1px 0px 1px;
-        }
-        &.i-bitcoin {
-          background: url('../../img/bitcoin.svg') 0 0 / contain no-repeat;
-        }
-        &.i-refresh {
-          background: url('../../img/refresh.svg') 0 0 / contain no-repeat;
-        }
-        &.i-server {
-          background: url('../../img/advanced.svg') 0 0 / contain no-repeat;
-        }
-      }
-
-    }
     &.selected {
       .topBarButton.fa {
         background-color: @mediumGray;
@@ -161,27 +153,34 @@ body {
       .tabMarker {
         border-top-color: @mediumGray;
       }
+
+      .icon-image-gen(general; true;);
+      .icon-image-gen(search; true;);
+      .icon-image-gen(tabs; true;);
+      .icon-image-gen(security; true;);
+      .icon-image-gen(shields; true;);
+      .icon-image-gen(payments; true;);
+      .icon-image-gen(sync; true;);
+      .icon-image-gen(advanced; true;);
     }
   }
-}
 
-.topBarButton.fa {
-  box-sizing: border-box;
-  color: white;
-  cursor: default;
-  display: inline-block;
-  font-size: 22px;
-  padding: 0;
-  position: relative;
-  width: 40px;
-  height: 50px;
-
-  &:before {
+  .topBarButton.fa {
     display: flex;
-    justify-content: center;
-    width: 20px;
-  }
+    align-items: center;
+    background: transparent;
+    -webkit-user-select: none;
+    padding: 11px;
 
+    & * {
+      color: white;
+    }
+
+    &:before,
+      &::before {
+        content: none;
+      }
+  }
 }
 
 .helpfulHints {
@@ -223,34 +222,6 @@ body {
   display: flex;
   height: 100%;
   margin-left: @sideBarWidth;
-}
-
-.tabMarkerContainer {
-  position: relative;
-
-  .tabMarker {
-    border-left: @carotRadius solid transparent;
-    border-right: @carotRadius solid transparent;
-    border-top: @carotRadius solid @gray;
-    height: 0;
-    left: ~"calc(100% - 6px)";
-    transform: rotateZ(-90deg);
-    position: absolute;
-    width: 0;
-    top: -27px;
-  }
-}
-
-.tabMarkerText {
-  display: inline-block;
-  color: white;
-  font-size: 0.7em;
-  height: 28px;
-  margin-top: 3px;
-
-  &:before {
-    display: inline-block;
-  }
 }
 
 a {

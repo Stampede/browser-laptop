@@ -1695,6 +1695,7 @@ class PreferenceNavigationButton extends ImmutableComponent {
   render () {
     return <div className={cx({
       selected: this.props.selected,
+      ['prefNavItem']: true,
       [this.props.className]: !!this.props.className
     })}>
       <div onClick={this.props.onClick}
@@ -1703,15 +1704,15 @@ class PreferenceNavigationButton extends ImmutableComponent {
           fa: true,
           [this.props.icon]: true
         })}>
-        <i className={this.props.icon.replace('fa-', 'i-')} />
-        <div className='tabMarkerText'
-          data-l10n-id={this.props.dataL10nId} />
+        <div className={cx({
+          [this.props.icon.replace('fa-', 'i-')]: true,
+          ['icon']: true
+        })}/>
+        <div data-l10n-id={this.props.dataL10nId} />
       </div>
       {
         this.props.selected
-        ? <div className='tabMarkerContainer'>
-          <div className='tabMarker' />
-        </div>
+        ? <div className='tabMarker' />
         : null
       }
     </div>
@@ -1737,49 +1738,52 @@ class HelpfulHints extends ImmutableComponent {
 class PreferenceNavigation extends ImmutableComponent {
   render () {
     return <div className='prefAside'>
-      <div />
-      <PreferenceNavigationButton icon='fa-list-alt'
-        dataL10nId='general'
-        onClick={this.props.changeTab.bind(null, preferenceTabs.GENERAL)}
-        selected={this.props.preferenceTab === preferenceTabs.GENERAL}
-      />
-      <PreferenceNavigationButton icon='fa-search'
-        dataL10nId='search'
-        onClick={this.props.changeTab.bind(null, preferenceTabs.SEARCH)}
-        selected={this.props.preferenceTab === preferenceTabs.SEARCH}
-      />
-      <PreferenceNavigationButton icon='fa-bookmark-o'
-        dataL10nId='tabs'
-        onClick={this.props.changeTab.bind(null, preferenceTabs.TABS)}
-        selected={this.props.preferenceTab === preferenceTabs.TABS}
-      />
-      <PreferenceNavigationButton icon='fa-lock'
-        dataL10nId='security'
-        onClick={this.props.changeTab.bind(null, preferenceTabs.SECURITY)}
-        selected={this.props.preferenceTab === preferenceTabs.SECURITY}
-      />
-      <PreferenceNavigationButton icon='fa-user'
-        dataL10nId='shields'
-        onClick={this.props.changeTab.bind(null, preferenceTabs.SHIELDS)}
-        selected={this.props.preferenceTab === preferenceTabs.SHIELDS}
-      />
-      <PreferenceNavigationButton icon='fa-bitcoin'
-        dataL10nId='payments'
-        onClick={this.props.changeTab.bind(null, preferenceTabs.PAYMENTS)}
-        selected={this.props.preferenceTab === preferenceTabs.PAYMENTS}
-      />
-      <PreferenceNavigationButton icon='fa-refresh'
-        className='notImplemented'
-        dataL10nId='sync'
-        onClick={this.props.changeTab.bind(null, preferenceTabs.SYNC)}
-        selected={this.props.preferenceTab === preferenceTabs.SYNC}
-      />
-      <PreferenceNavigationButton icon='fa-server'
-        dataL10nId='advanced'
-        onClick={this.props.changeTab.bind(null, preferenceTabs.ADVANCED)}
-        selected={this.props.preferenceTab === preferenceTabs.ADVANCED}
-      />
-      <HelpfulHints hintNumber={this.props.hintNumber} refreshHint={this.props.refreshHint} />
+      <div className='prefNav'>
+        <PreferenceNavigationButton icon='fa-general'
+          dataL10nId='general'
+          onClick={this.props.changeTab.bind(null, preferenceTabs.GENERAL)}
+          selected={this.props.preferenceTab === preferenceTabs.GENERAL}
+        />
+        <PreferenceNavigationButton icon='fa-search'
+          dataL10nId='search'
+          onClick={this.props.changeTab.bind(null, preferenceTabs.SEARCH)}
+          selected={this.props.preferenceTab === preferenceTabs.SEARCH}
+        />
+        <PreferenceNavigationButton icon='fa-tabs'
+          dataL10nId='tabs'
+          onClick={this.props.changeTab.bind(null, preferenceTabs.TABS)}
+          selected={this.props.preferenceTab === preferenceTabs.TABS}
+        />
+        <PreferenceNavigationButton icon='fa-security'
+          dataL10nId='security'
+          onClick={this.props.changeTab.bind(null, preferenceTabs.SECURITY)}
+          selected={this.props.preferenceTab === preferenceTabs.SECURITY}
+        />
+        <PreferenceNavigationButton icon='fa-shields'
+          dataL10nId='shields'
+          onClick={this.props.changeTab.bind(null, preferenceTabs.SHIELDS)}
+          selected={this.props.preferenceTab === preferenceTabs.SHIELDS}
+        />
+        <PreferenceNavigationButton icon='fa-payments'
+          dataL10nId='payments'
+          onClick={this.props.changeTab.bind(null, preferenceTabs.PAYMENTS)}
+          selected={this.props.preferenceTab === preferenceTabs.PAYMENTS}
+        />
+        <PreferenceNavigationButton icon='fa-sync'
+          className='notImplemented'
+          dataL10nId='sync'
+          onClick={this.props.changeTab.bind(null, preferenceTabs.SYNC)}
+          selected={this.props.preferenceTab === preferenceTabs.SYNC}
+        />
+        <PreferenceNavigationButton icon='fa-advanced'
+          dataL10nId='advanced'
+          onClick={this.props.changeTab.bind(null, preferenceTabs.ADVANCED)}
+          selected={this.props.preferenceTab === preferenceTabs.ADVANCED}
+        />
+      </div>
+      <div className='prefHints'>
+        <HelpfulHints hintNumber={this.props.hintNumber} refreshHint={this.props.refreshHint} />
+      </div>
     </div>
   }
 }
